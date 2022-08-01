@@ -7,18 +7,16 @@ class Serializer
   end
 
   def serialize
-    if obj.class.name == "Comment"
-      return obj.to_h.except(:title)
-    elsif obj.class.name == "Post"
-      title = obj.to_h[:title]
-      id = obj.to_h[:id]
-      date = obj.to_h[:date]
-      obj = obj.to_h
-      obj[:title] = title
-      obj[:id] = id
-      obj[:date] = Date.parse(date.to_s).strftime("%d-%m-%Y")
-      return obj
+    obj = @obj.to_h
+    obj.keys.each do |key|
+      if obj[key].nil?
+        obj = obj.except(key)
+      end
+      if obj[key].class == Date
+        obj[key] = Date.parse(obj[key].to_s).strftime("%d-%m-%Y")
+      end
     end
+    return obj
   end
 
   def obj
